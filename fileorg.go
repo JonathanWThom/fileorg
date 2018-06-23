@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,8 +28,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("%#v", filetypes)
-	for k, _ := range filetypes {
+	for k, v := range filetypes {
 		dirname := trimLeftChar(k)
 		if dirname != "" {
 			err := os.Mkdir(dirname, 0777)
@@ -38,15 +36,14 @@ func main() {
 				log.Fatal(err)
 			}
 
-			//for _, _ := range v {
-			//err := os.Rename(file, dirname+"/"+file)
-			//if err != nil {
-			//	log.Fatal(err)
-			//}
-			//}
+			for _, file := range v {
+				err := os.Rename(file, dirname+"/"+file)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
 		}
 	}
-	fmt.Printf("%#v", filetypes)
 }
 
 // Could move this to a utils file
