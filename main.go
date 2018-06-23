@@ -7,16 +7,18 @@ import (
 )
 
 func main() {
-	f, err := os.Open(".")
+	dir, err := os.Open(".")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	dirs, err := f.Readdir(-1)
-	f.Close()
+	files, err := dir.Readdir(-1)
+	dir.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(dirs)
+	for _, file := range files {
+		fmt.Println(file.Name())
+	}
 }
