@@ -25,11 +25,13 @@ func main() {
 	/// create a folder for all of those
 	/// move all the files there
 	/// don't run while in this directory or it'll mess up this program
+	filetypes := make(map[string][]string)
 	for _, file := range files {
 		name := file.Name()
 		ext := filepath.Ext(name)
-		fmt.Println(ext)
+		filetypes[ext] = append(filetypes[ext], name)
 	}
+	fmt.Printf("%#v", filetypes)
 }
 
 // TODO: Handle directories and files without extensions
