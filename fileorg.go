@@ -31,7 +31,24 @@ func main() {
 		ext := filepath.Ext(name)
 		filetypes[ext] = append(filetypes[ext], name)
 	}
+
+	for k, _ := range filetypes {
+		dirname := trimLeftChar(k)
+		os.Mkdir(dirname, 0777)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 	fmt.Printf("%#v", filetypes)
+}
+
+func trimLeftChar(s string) string {
+	for i := range s {
+		if i > 0 {
+			return s[i:]
+		}
+	}
+	return s[:0]
 }
 
 // TODO: Handle directories and files without extensions
