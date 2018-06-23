@@ -9,12 +9,13 @@ import (
 )
 
 func main() {
-	files := openDirectory()
-	filetypes := organizeByFiletype(files)
-	createSubdirectories(filetypes)
+	files := OpenDirectory()
+	filetypes := OrganizeByFiletype(files)
+	CreateSubdirectories(filetypes)
 }
 
-func openDirectory() []os.FileInfo {
+// OpenDirectory opens the current directory and returns the files within
+func OpenDirectory() []os.FileInfo {
 	dir, err := os.Open(".")
 	if err != nil {
 		log.Fatal(err)
@@ -29,7 +30,9 @@ func openDirectory() []os.FileInfo {
 	return files
 }
 
-func organizeByFiletype(files []os.FileInfo) map[string][]string {
+// OrganizeByFiletype takes an array of FileInfo and returns a map
+// of file extension keys and file names
+func OrganizeByFiletype(files []os.FileInfo) map[string][]string {
 	filetypes := make(map[string][]string)
 
 	for _, file := range files {
@@ -43,7 +46,9 @@ func organizeByFiletype(files []os.FileInfo) map[string][]string {
 	return filetypes
 }
 
-func createSubdirectories(filetypes map[string][]string) {
+// CreateSubdirectories takes a map of file extension keys and filenames, creates
+// subdirectories, and moves the files to those directories.
+func CreateSubdirectories(filetypes map[string][]string) {
 	for k, v := range filetypes {
 		dirname := utils.TrimLeftChar(k)
 		if dirname != "" {
