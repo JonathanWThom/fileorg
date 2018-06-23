@@ -1,12 +1,20 @@
+// Fileorg will organize files into subdirectories based on file extension
 package main
 
 import (
+	"github.com/jonathanwthom/fileorg/utils"
 	"log"
 	"os"
 	"path/filepath"
 )
 
 func main() {
+	files := openDirectory()
+	filetypes := organizeByFiletype(files)
+	createSubdirectories(filetypes)
+}
+
+func openDirectory() []os.FileInfo {
 	dir, err := os.Open(".")
 	if err != nil {
 		log.Fatal(err)
@@ -18,8 +26,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	/// move all the files there
+	return files
+}
+
+func organizeByFiletype(files []os.FileInfo) map[string][]string {
 	filetypes := make(map[string][]string)
+
 	for _, file := range files {
 		name := file.Name()
 		ext := filepath.Ext(name)
@@ -28,8 +40,12 @@ func main() {
 		}
 	}
 
+	return filetypes
+}
+
+func createSubdirectories(filetypes map[string][]string) {
 	for k, v := range filetypes {
-		dirname := trimLeftChar(k)
+		dirname := utils.TrimLeftChar(k)
 		if dirname != "" {
 			err := os.Mkdir(dirname, 0777)
 			if err != nil {
@@ -45,17 +61,3 @@ func main() {
 		}
 	}
 }
-
-// Could move this to a utils file
-func trimLeftChar(s string) string {
-	for i := range s {
-		if i > 0 {
-			return s[i:]
-		}
-	}
-	return s[:0]
-}
-
-// TODO: Handle directories and files without extensions
-// TODO: Tests
-// TODO: refactor into functions
