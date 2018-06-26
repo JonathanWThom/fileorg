@@ -8,10 +8,18 @@ and all files will be moved into subdirectories based on their file extension.
 **This tool moves files. It could screw up your computer if executed on the
 wrong directory. Make sure you know what you're doing.**
 
+_With Go_
 1. [Install Go](https://golang.org/doc/install)
 2. `go get github.com/jonathanwthom/fileorg`
 3. `go install github.com/jonathanwthom/fileorg`
 4. Navigate to the directory you want to organize.
+5. `fileorg`
+
+_Without Go_
+1. `git clone https://github.com/JonathanWThom/fileorg.git`
+2. `cd fileorg`
+3. `sudo cp fileorg /usr/local/bin`
+4. `cd ~/path/to/your/directory`
 5. `fileorg`
 
 ### TODO
