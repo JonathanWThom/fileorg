@@ -2,6 +2,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/jonathanwthom/fileorg/utils"
 	"log"
 	"os"
@@ -9,14 +11,18 @@ import (
 )
 
 func main() {
-	files := OpenDirectory()
-	filetypes := OrganizeByFiletype(files)
-	CreateSubdirectories(filetypes)
+	dateFlag := flag.Bool("date", false, "Subdivide by date")
+	flag.Parse()
+	files := openDirectory(".")
+	filetypes := organizeByFiletype(files)
+	dirs := createSubdirectories(filetypes)
+	if *dateFlag == true {
+		createSubdirectoriesByDate(dirs)
+	}
 }
 
-// OpenDirectory opens the current directory and returns the files within
-func OpenDirectory() []os.FileInfo {
-	dir, err := os.Open(".")
+func openDirectory(path string) []os.FileInfo {
+	dir, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,9 +36,7 @@ func OpenDirectory() []os.FileInfo {
 	return files
 }
 
-// OrganizeByFiletype takes an array of FileInfo and returns a map
-// of file extension keys and file names
-func OrganizeByFiletype(files []os.FileInfo) map[string][]string {
+func organizeByFiletype(files []os.FileInfo) map[string][]string {
 	filetypes := make(map[string][]string)
 
 	for _, file := range files {
@@ -46,13 +50,13 @@ func OrganizeByFiletype(files []os.FileInfo) map[string][]string {
 	return filetypes
 }
 
-// CreateSubdirectories takes a map of file extension keys and filenames, creates
-// subdirectories, and moves the files to those directories.
-func CreateSubdirectories(filetypes map[string][]string) {
+func createSubdirectories(filetypes map[string][]string) []string {
+	var dirs []string
 	for k, v := range filetypes {
 		dirname := utils.TrimLeftChar(k)
 		if dirname != "" {
 			err := os.Mkdir(dirname, 0777)
+			dirs = append(dirs, dirname)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -63,6 +67,35 @@ func CreateSubdirectories(filetypes map[string][]string) {
 					log.Fatal(err)
 				}
 			}
+		}
+	}
+	return dirs
+}
+
+func createSubdirectoriesByDate(dirs []string) {
+	for _, dir := range dirs {
+		files := openDirectory(dir)
+		organizeByDate(dir, files)
+	}
+}
+
+func organizeByDate(dir string, files []os.FileInfo) {
+	for _, file := range files {
+		modifiedAt := file.ModTime()
+		month := modifiedAt.Month()
+		year := modifiedAt.Year()
+		dirname := fmt.Sprintf("%v/%v_%v", dir, month, year)
+
+		if _, err := os.Stat(dirname); os.IsNotExist(err) {
+			err := os.Mkdir(dirname, 0777)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		err := os.Rename(dir+"/"+file.Name(), dirname+"/"+file.Name())
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }

@@ -22,10 +22,24 @@ _Without Go_
 4. `cd ~/path/to/your/directory`
 5. `fileorg`
 
+If you want to organize files even futher, passing the `-date` option will
+will create subdirectories based on when each file was last updated. For example:
+
+```
+$ ls
+$ old.pdf also_old.pdf new.pdf
+$ fileorg -date
+$ ls
+$ pdf
+$ ls pdf
+$ July_2014 March_2018
+$ ls pdf/July_2014
+$ old.pdf also_old.pdf
+```
+
 ### TODO
 
 - Build out test coverage.
 - Add confirmation message (e.g. "You are about to move these files, are you sure
 you want to do that?").
-- Create further subdirectories, sorted by date.
 - Organize files by _type_ (like all images go together).
