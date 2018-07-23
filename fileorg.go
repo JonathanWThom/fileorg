@@ -55,11 +55,8 @@ func createSubdirectories(filetypes map[string][]string) []string {
 	for k, v := range filetypes {
 		dirname := utils.TrimLeftChar(k)
 		if dirname != "" {
-			err := os.Mkdir(dirname, 0777)
+			createDirectory(dirname)
 			dirs = append(dirs, dirname)
-			if err != nil {
-				log.Fatal(err)
-			}
 
 			for _, file := range v {
 				err := os.Rename(file, dirname+"/"+file)
@@ -79,19 +76,22 @@ func createSubdirectoriesByDate(dirs []string) {
 	}
 }
 
+func createDirectory(dirname string) {
+	if _, err := os.Stat(dirname); os.IsNotExist(err) {
+		err := os.Mkdir(dirname, 0777)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func organizeByDate(dir string, files []os.FileInfo) {
 	for _, file := range files {
 		modifiedAt := file.ModTime()
 		month := modifiedAt.Month()
 		year := modifiedAt.Year()
 		dirname := fmt.Sprintf("%v/%v_%v", dir, month, year)
-
-		if _, err := os.Stat(dirname); os.IsNotExist(err) {
-			err := os.Mkdir(dirname, 0777)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+		createDirectory(dirname)
 
 		err := os.Rename(dir+"/"+file.Name(), dirname+"/"+file.Name())
 		if err != nil {
