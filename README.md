@@ -40,6 +40,4 @@ $ old.pdf also_old.pdf
 ### TODO
 
 - Build out test coverage.
-- Add confirmation message (e.g. "You are about to move these files, are you sure
-you want to do that?").
-- Organize files by _type_ (like all images go together).
+ Organize files by _type_ (like all images go together).

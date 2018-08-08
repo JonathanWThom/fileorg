@@ -2,23 +2,45 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"github.com/jonathanwthom/fileorg/utils"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
 	dateFlag := flag.Bool("date", false, "Subdivide by date")
 	flag.Parse()
-	files := openDirectory(".")
-	filetypes := organizeByFiletype(files)
-	dirs := createSubdirectories(filetypes)
-	if *dateFlag == true {
-		createSubdirectoriesByDate(dirs)
+
+	if proceedWithFileOrg() == true {
+		files := openDirectory(".")
+		filetypes := organizeByFiletype(files)
+		dirs := createSubdirectories(filetypes)
+		if *dateFlag == true {
+			createSubdirectoriesByDate(dirs)
+		}
 	}
+}
+
+func proceedWithFileOrg() bool {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("You are about to reorganize %s, are you sure you want to do this? y/n\n", dir)
+	reader := bufio.NewReader(os.Stdin)
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	if strings.TrimSuffix(text, "\n") == "y" {
+		return true
+	}
+	return false
 }
 
 func openDirectory(path string) []os.FileInfo {
