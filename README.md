@@ -40,4 +40,4 @@ $ old.pdf also_old.pdf
 ### TODO
 
 - Build out test coverage.
- Organize files by _type_ (like all images go together).
+- Organize files by _type_ (like all images go together).
